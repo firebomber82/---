@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>職涯現況與潛力特質｜晨煦顧問 Sun & Clarity</title>
+    
+    <!-- 引入 React 和 Babel (用於解析 JSX) -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- 引入 Tailwind CSS (快速美化) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 設定品牌色系 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sun: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            500: '#f59e0b', // 晨曦金
+                            600: '#d97706',
+                        },
+                        clarity: {
+                            800: '#1e3a8a', // 專業深藍
+                            900: '#172554',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef } = React;
+
+        // --- 設定區：Google Form 對應資訊 (經原始碼校準 V3.0) ---
+        // 修正：移除 /u/0/ 路徑，確保通用性
+        const FORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLScSkcwiVpfnjqdj8WSIbdaNiebMY4mm6fshqjSmklwI1775SQ/formResponse";
+        
+        // 欄位 ID (與原始碼一致)
+        const ENTRY_IDS = {
+            age: "entry.1731790734",        // Q1
+            years: "entry.653895230",      // Q2
+            jobType: "entry.1066511856",   // Q3 (複選)
+            passion: "entry.1326156335",   // Q4 (1-5分)
+            burnout: "entry.1425115510",   // Q5 (複選)
+            advantage: "entry.1349449401", // Q6 (簡答)
+            needs: "entry.2017827927"      // Q7 (單選)
+        };
+
+        // --- 選項資料 ---
+        const OPTIONS = {
+            age: ["20 ~ 25 歲 (職場新鮮人)", "26 ~ 30 歲 (初期探索/第一次轉職)", "31 ~ 35 歲 (資深執行/小主管)", "36 ~ 40 歲 (中高階主管/轉型期)", "41 ~ 45 歲 (高階管理/創業思考)", "46 歲以上"],
+            years: ["1 年以下", "1 ~ 3 年", "3 ~ 5 年", "5 ~ 10 年", "10 年以上"],
+            jobType: ["行政/後勤/總務", "財會/金融/稅務", "業務/銷售/客服", "行銷/企劃/社群", "專案管理 (PM) / 產品經理", "工程/研發/技術", "設計/藝術/創作", "醫療/教育/公職", "待業中 / 學生", "其他"],
+            burnout: ["薪資福利與付出不成正比", "企業文化/辦公室政治/人際衝突", "工作內容瑣碎，無法發揮專長", "缺乏晉升管道與成長空間", "產業前景不明/公司經營不穩", "工時過長，嚴重影響生活平衡", "與直屬主管溝通困難", "其他"],
+            needs: ["履歷健檢與面試模擬 (短期求職)", "職涯方向定位與適性分析 (中期規劃)", "跨領域轉職的策略諮詢 (轉型策略)", "職場人際與向上管理技巧 (職場生存)", "創業或副業經營諮詢 (商業模式)"]
+        };
+
+        function App() {
+            const [submitted, setSubmitted] = useState(false);
+            const [loading, setLoading] = useState(false);
+            
+            // 處理表單提交
+            const handleSubmit = () => {
+                setLoading(true);
+                // 模擬延遲，讓使用者看到 loading (實際上資料是透過 iframe 傳送的)
+                setTimeout(() => {
+                    setLoading(false);
+                    setSubmitted(true);
+                    window.scrollTo(0, 0);
+                }, 1500);
+            };
+
+            // 成功提交後的畫面
+            if (submitted) {
+                return (
+                    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-clarity-900 text-white text-center fade-in">
+                        <div className="w-20 h-20 bg-sun-500 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-sun-500/50">
+                            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <h2 className="text-3xl font-bold mb-4">數據已建檔</h2>
+                        <p className="text-slate-300 max-w-md text-lg">
+                            感謝您的填寫。您的職涯數據已安全存入「晨煦顧問」的分析資料庫。
+                            <br/><br/>
+                            我們將盡快根據這些數據優化我們的「職涯穿行測試」模型。
+                        </p>
+                        <button onClick={() => window.location.reload()} className="mt-8 px-6 py-2 border border-slate-500 rounded-full hover:bg-white hover:text-clarity-900 transition text-sm">
+                            返回首頁
+                        </button>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen bg-slate-50">
+                    {/* Header 區域 */}
+                    <header className="bg-clarity-900 text-white py-12 px-6 shadow-xl relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-sun-500 to-red-500"></div>
+                        <div className="max-w-3xl mx-auto relative z-10">
+                            <h1 className="text-3xl md:text-4xl font-bold mb-3 tracking-wide">
+                                職涯現況與潛力特質
+                                <span className="block text-sun-500 text-lg md:text-xl font-medium mt-2">Preliminary Career Assessment</span>
+                            </h1>
+                            <p className="text-slate-300 mt-4 leading-relaxed">
+                                您好，我是「晨煦顧問有限公司 (Sun & Clarity Consulting)」的創辦人。<br/>
+                                這份問卷旨在了解您的職涯現況，協助我們建立更精準的職涯數據庫。
+                            </p>
+                            <div className="flex items-center mt-6 text-xs text-slate-400 uppercase tracking-widest">
+                                <span className="bg-slate-800 px-2 py-1 rounded mr-2">Confidential</span>
+                                <span>匿名大數據收集</span>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Form 主體容器 */}
+                    <main className="max-w-3xl mx-auto -mt-8 px-4 pb-20 relative z-20">
+                        {/* 關鍵技術：隱藏的 iframe 用於接收 Google 回傳的跳轉指令，防止頁面被導走 */}
+                        <iframe name="hidden_iframe" id="hidden_iframe" style={{display: 'none'}} onLoad={() => { if(loading) handleSubmit() }}></iframe>
+                        
+                        <form 
+                            action={FORM_ACTION} 
+                            method="POST" 
+                            target="hidden_iframe"
+                            onSubmit={() => setLoading(true)}
+                            className="space-y-6"
+                        >
+                            {/* [關鍵修正] Google Forms 必須的隱藏驗證欄位，從您的原始碼提取 */}
+                            <input type="hidden" name="fvv" value="1" />
+                            <input type="hidden" name="pageHistory" value="0" />
+                            {/* fbzx: 這是表單的安全令牌，必須與原始碼一致 */}
+                            <input type="hidden" name="fbzx" value="403181521596321884" />
+                            {/* 補上 partialResponse，這對新版表單很重要 */}
+                            <input type="hidden" name="partialResponse" value='[null,null,"403181521596321884"]' />
+                            <input type="hidden" name="submissionTimestamp" value="-1" />
+
+                            {/* Q1: 年齡 */}
+                            <QuestionCard title="01. 您的年齡範疇？" required>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {OPTIONS.age.map((opt, i) => (
+                                        <RadioOption key={i} name={ENTRY_IDS.age} value={opt} label={opt} />
+                                    ))}
+                                </div>
+                            </QuestionCard>
+
+                            {/* Q2: 年資 */}
+                            <QuestionCard title="02. 您目前的總工作年資？" required>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {OPTIONS.years.map((opt, i) => (
+                                        <RadioOption key={i} name={ENTRY_IDS.years} value={opt} label={opt} />
+                                    ))}
+                                </div>
+                            </QuestionCard>
+
+                            {/* Q3: 工作性質 (多選) */}
+                            <QuestionCard title="03. 您目前從事的工作性質屬於？" subtitle="(可複選)" required>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {OPTIONS.jobType.map((opt, i) => (
+                                        <CheckboxOption key={i} name={ENTRY_IDS.jobType} value={opt} label={opt} />
+                                    ))}
+                                </div>
+                            </QuestionCard>
+
+                            {/* Q4: 熱愛程度 (1-5分) */}
+                            <QuestionCard title="04. 針對目前的工作，您的「熱愛程度」打幾分？" subtitle="1分 (極度痛苦) - 5分 (視為天職)" required>
+                                <div className="flex justify-between items-center px-2 py-4 bg-slate-100 rounded-lg">
+                                    <span className="text-sm font-bold text-slate-400">痛苦</span>
+                                    {[1, 2, 3, 4, 5].map((num) => (
+                                        <label key={num} className="flex flex-col items-center cursor-pointer group">
+                                            <input type="radio" name={ENTRY_IDS.passion} value={num} className="peer sr-only" required />
+                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-slate-300 flex items-center justify-center text-lg font-bold text-slate-500 peer-checked:bg-clarity-800 peer-checked:text-white peer-checked:border-clarity-800 transition-all group-hover:border-sun-500">
+                                                {num}
+                                            </div>
+                                        </label>
+                                    ))}
+                                    <span className="text-sm font-bold text-sun-600">天職</span>
+                                </div>
+                            </QuestionCard>
+
+                            {/* Q5: 消耗原因 (多選) */}
+                            <QuestionCard title="05. 感到「最消耗」或「最不滿」的原因？" subtitle="(至多選3項)" required>
+                                <div className="space-y-3">
+                                    {OPTIONS.burnout.map((opt, i) => (
+                                        <CheckboxOption key={i} name={ENTRY_IDS.burnout} value={opt} label={opt} />
+                                    ))}
+                                </div>
+                            </QuestionCard>
+
+                            {/* Q6: 競爭優勢 (文字框) */}
+                            <QuestionCard title="06. 職場上最大的「競爭優勢」或「擅長事項」？" subtitle="例如：邏輯分析、跨部門溝通、危機處理..." required>
+                                <textarea 
+                                    name={ENTRY_IDS.advantage} 
+                                    className="w-full p-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sun-500 focus:border-transparent outline-none min-h-[120px] bg-slate-50"
+                                    placeholder="請簡述您的核心優勢..."
+                                    required
+                                ></textarea>
+                            </QuestionCard>
+
+                            {/* Q7: 急需協助的問題 */}
+                            <QuestionCard title="07. 在職涯發展上，您目前最急需協助的問題是什麼？" required>
+                                <div className="space-y-3">
+                                    {OPTIONS.needs.map((opt, i) => (
+                                        <RadioOption key={i} name={ENTRY_IDS.needs} value={opt} label={opt} />
+                                    ))}
+                                </div>
+                            </QuestionCard>
+
+                            {/* 提交按鈕 */}
+                            <div className="pt-6">
+                                <button 
+                                    type="submit" 
+                                    disabled={loading}
+                                    className={`w-full py-4 rounded-lg font-bold text-lg tracking-wide shadow-lg transition-all transform hover:-translate-y-1 ${loading ? 'bg-slate-400 cursor-not-allowed' : 'bg-sun-500 hover:bg-sun-600 text-white'}`}
+                                >
+                                    {loading ? (
+                                        <span className="flex items-center justify-center">
+                                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                            資料加密傳輸中...
+                                        </span>
+                                    ) : '提交評估表單'}
+                                </button>
+                                <p className="text-center text-xs text-slate-400 mt-4">
+                                    點擊提交即代表您同意我們將資料用於內部職涯模型分析。
+                                </p>
+                            </div>
+                        </form>
+                    </main>
+                    
+                    <footer className="text-center py-8 text-slate-400 text-sm">
+                        &copy; 2026 晨煦顧問有限公司 Sun & Clarity Consulting. All Rights Reserved.
+                    </footer>
+                </div>
+            );
+        }
+
+        // --- 子元件 (負責渲染漂亮的輸入框) ---
+
+        const QuestionCard = ({ title, subtitle, children, required }) => (
+            <div className="bg-white p-6 md:p-8 rounded-xl shadow-md border-l-4 border-clarity-800 fade-in">
+                <h3 className="text-lg md:text-xl font-bold text-slate-800 mb-1">
+                    {title}
+                    {required && <span className="text-red-500 ml-1">*</span>}
+                </h3>
+                {subtitle && <p className="text-slate-500 text-sm mb-4">{subtitle}</p>}
+                {!subtitle && <div className="mb-4"></div>}
+                {children}
+            </div>
+        );
+
+        const RadioOption = ({ name, value, label }) => (
+            <label className="flex items-center p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition hover:border-sun-500 group">
+                <input type="radio" name={name} value={value} className="peer sr-only" required />
+                <div className="w-5 h-5 rounded-full border-2 border-slate-300 mr-3 peer-checked:border-sun-500 peer-checked:bg-sun-500 flex-shrink-0 relative">
+                    <div className="absolute inset-0 m-auto w-2 h-2 rounded-full bg-white opacity-0 peer-checked:opacity-100"></div>
+                </div>
+                <span className="text-slate-700 font-medium group-hover:text-clarity-900">{label}</span>
+            </label>
+        );
+
+        const CheckboxOption = ({ name, value, label }) => (
+            <label className="flex items-center p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition hover:border-sun-500 group">
+                <input type="checkbox" name={name} value={value} className="peer sr-only" />
+                <div className="w-5 h-5 rounded border-2 border-slate-300 mr-3 peer-checked:border-sun-500 peer-checked:bg-sun-500 flex-shrink-0 relative flex items-center justify-center">
+                   <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span className="text-slate-700 font-medium group-hover:text-clarity-900">{label}</span>
+            </label>
+        );
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
